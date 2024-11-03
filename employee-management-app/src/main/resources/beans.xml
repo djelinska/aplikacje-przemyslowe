@@ -4,6 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="president" class="com.example.employee_management_app.model.Person">
+        <constructor-arg value="1" />
         <constructor-arg value="Chrystal" />
         <constructor-arg value="Havoc" />
         <constructor-arg value="chavocr@yahoo.com" />
@@ -11,6 +12,7 @@
     </bean>
 
     <bean id="vicePresident" class="com.example.employee_management_app.model.Person">
+        <constructor-arg value="2" />
         <constructor-arg value="Halley" />
         <constructor-arg value="Gadaud" />
         <constructor-arg value="hgadaud9@sohu.com" />
@@ -18,6 +20,7 @@
     </bean>
 
     <bean id="secretary" class="com.example.employee_management_app.model.Person">
+        <constructor-arg value="3" />
         <constructor-arg value="Kirbie" />
         <constructor-arg value="Wrettum" />
         <constructor-arg value="kwrettumj@slideshare.net" />

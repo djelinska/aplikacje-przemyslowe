@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -31,6 +32,22 @@ public class PersonService {
 
     public List<Person> getAllEmployees() {
         return company.getAllEmployees();
+    }
+
+    public Optional<Person> getEmployeeById(int id) {
+        return company.getEmployeeById(id);
+    }
+
+    public Person addEmployee(Person newEmployee) {
+        return company.addEmployee(newEmployee);
+    }
+
+    public Person updateEmployee(int id, Person newEmployee) {
+        return company.updateEmployee(id, newEmployee);
+    }
+
+    public boolean deleteEmployee(int id) {
+        return company.deleteEmployee(id);
     }
 
     public List<Person> filterByCompany(String companyName) {

@@ -5,10 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Company {
     private final List<Person> employees;
+    private int idGenerator = 1;
 
     public Company(String filePath) {
         this.employees = loadEmployees(filePath);
@@ -27,6 +31,10 @@ public class Company {
         }
     }
 
+    private synchronized int getNextId() {
+        return idGenerator++;
+    }
+
     private Person mapToPerson(String line) {
         String[] data = line.split(",");
         String firstName = data[0];
@@ -34,7 +42,9 @@ public class Company {
         String email = data[2];
         String company = email.substring(email.indexOf('@') + 1, email.indexOf('.'));
 
-        return new Person(firstName, lastName, email, capitalize(company));
+        int id = getNextId();
+
+        return new Person(id, firstName, lastName, email, capitalize(company));
     }
 
     private String capitalize(String text) {
@@ -42,8 +52,40 @@ public class Company {
     }
 
     public List<Person> getAllEmployees() {
-        return new ArrayList<>(employees);
+        return employees;
     }
+
+    public Optional<Person> getEmployeeById(int id) {
+        return employees.stream().filter(e -> e.getId() == id).findFirst();
+    }
+
+    public Person addEmployee(Person newEmployee) {
+        newEmployee.setId(employees.size() + 1);
+        employees.add(newEmployee);
+
+        return newEmployee;
+    }
+
+    public Person updateEmployee(int id, Person newEmployee) {
+        Optional<Person> existingPerson = getEmployeeById(id);
+
+        if (existingPerson.isPresent()) {
+            Person person = existingPerson.get();
+            person.setFirstName(newEmployee.getFirstName());
+            person.setLastName(newEmployee.getLastName());
+            person.setEmail(newEmployee.getEmail());
+            person.setCompany(newEmployee.getCompany());
+
+            return person;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    public boolean deleteEmployee(int id) {
+        return employees.removeIf(e -> e.getId() == id);
+    }
+
 
     public List<Person> filterByCompany(String company) {
         return employees.stream()
