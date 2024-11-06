@@ -30,7 +30,7 @@ public class PersonController {
         Optional<Person> person = personService.getEmployeeById(id);
         return person.<ResponseEntity<Object>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Employee with ID " + id + " not found."));
+                .body(Collections.singletonMap("error", "Employee with ID " + id + " not found.")));
     }
 
     @PostMapping
@@ -40,7 +40,7 @@ public class PersonController {
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error creating employee: " + e.getMessage());
+                    .body(Collections.singletonMap("error", "Error creating employee: " + e.getMessage()));
         }
     }
 
@@ -51,10 +51,10 @@ public class PersonController {
             return ResponseEntity.ok(updatedPerson);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Employee with ID " + id + " not found.");
+                    .body(Collections.singletonMap("error", "Employee with ID " + id + " not found."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error updating employee: " + e.getMessage());
+                    .body(Collections.singletonMap("error", "Error updating employee: " + e.getMessage()));
         }
     }
 
@@ -65,7 +65,7 @@ public class PersonController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Employee with ID " + id + " not found.");
+                    .body(Collections.singletonMap("error", "Employee with ID " + id + " not found."));
         }
     }
 }
