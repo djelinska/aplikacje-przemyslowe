@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,6 +39,10 @@ public class PersonService {
         return company.getEmployeeById(id);
     }
 
+    public Optional<Person> getEmployeeByEmail(String email) {
+        return company.getEmployeeByEmail(email);
+    }
+
     public Person addEmployee(Person newEmployee) {
         return company.addEmployee(newEmployee);
     }
@@ -56,5 +61,17 @@ public class PersonService {
 
     public List<Person> sortByLastName() {
         return company.sortByLastName();
+    }
+
+    public Map<String, Double> calculateSalarySumByCurrency() {
+        return company.calculateSalarySumByCurrency();
+    }
+
+    public List<String> getAllCountries() {
+        return company.getAllCountries();
+    }
+
+    public List<Person> getEmployeesByCountry(String country) {
+        return company.getEmployeesByCountry(country);
     }
 }

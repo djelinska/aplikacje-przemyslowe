@@ -5,13 +5,19 @@ public class Person {
     private String firstName;
     private String lastName;
     private String email;
+    private double salary;
+    private String currency;
+    private String country;
     private String company;
 
-    public Person(int id, String firstName, String lastName, String email, String company) {
+    public Person(int id, String firstName, String lastName, String email, double salary, String currency, String country, String company) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.salary = salary;
+        this.currency = currency;
+        this.country = country;
         this.company = company;
     }
 
@@ -21,6 +27,30 @@ public class Person {
 
     public void setCompany(String company) {
         this.company = company;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
     }
 
     public String getEmail() {
@@ -62,6 +92,9 @@ public class Person {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", salary=" + salary +
+                ", currency='" + currency + '\'' +
+                ", country='" + country + '\'' +
                 ", company='" + company + '\'' +
                 '}';
     }

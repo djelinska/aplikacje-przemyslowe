@@ -8,6 +8,9 @@
         <constructor-arg value="Chrystal" />
         <constructor-arg value="Havoc" />
         <constructor-arg value="chavocr@yahoo.com" />
+        <constructor-arg value="100000.00" />
+        <constructor-arg value="USD" />
+        <constructor-arg value="USA" />
         <constructor-arg value="Mymm" />
     </bean>
 
@@ -16,6 +19,9 @@
         <constructor-arg value="Halley" />
         <constructor-arg value="Gadaud" />
         <constructor-arg value="hgadaud9@sohu.com" />
+        <constructor-arg value="85000.00" />
+        <constructor-arg value="EUR" />
+        <constructor-arg value="France" />
         <constructor-arg value="Oyope" />
     </bean>
 
@@ -24,6 +30,9 @@
         <constructor-arg value="Kirbie" />
         <constructor-arg value="Wrettum" />
         <constructor-arg value="kwrettumj@slideshare.net" />
+        <constructor-arg value="60000.00" />
+        <constructor-arg value="GBP" />
+        <constructor-arg value="UK" />
         <constructor-arg value="Browsetype" />
     </bean>
 </beans>

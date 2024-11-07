@@ -3,11 +3,7 @@ package com.example.employee_management_app.model;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Company {
@@ -40,11 +36,14 @@ public class Company {
         String firstName = data[0];
         String lastName = data[1];
         String email = data[2];
+        double salary = Double.parseDouble(data[3]);
+        String currency = data[4];
+        String country = data[5];
         String company = email.substring(email.indexOf('@') + 1, email.indexOf('.'));
 
         int id = getNextId();
 
-        return new Person(id, firstName, lastName, email, capitalize(company));
+        return new Person(id, firstName, lastName, email, salary, currency, country, capitalize(company));
     }
 
     private String capitalize(String text) {
@@ -57,6 +56,10 @@ public class Company {
 
     public Optional<Person> getEmployeeById(int id) {
         return employees.stream().filter(e -> e.getId() == id).findFirst();
+    }
+
+    public Optional<Person> getEmployeeByEmail(String email) {
+        return employees.stream().filter(e -> Objects.equals(e.getEmail(), email)).findFirst();
     }
 
     public Person addEmployee(Person newEmployee) {
@@ -74,6 +77,9 @@ public class Company {
             person.setFirstName(newEmployee.getFirstName());
             person.setLastName(newEmployee.getLastName());
             person.setEmail(newEmployee.getEmail());
+            person.setSalary(newEmployee.getSalary());
+            person.setCurrency(newEmployee.getCurrency());
+            person.setCountry(newEmployee.getCountry());
             person.setCompany(newEmployee.getCompany());
 
             return person;
@@ -83,7 +89,7 @@ public class Company {
     }
 
     public boolean deleteEmployee(int id) {
-        return employees.removeIf(e -> e.getId() == id);
+        return employees.removeIf(employee -> employee.getId() == id);
     }
 
 
@@ -97,5 +103,27 @@ public class Company {
         return employees.stream()
                 .sorted((p1, p2) -> p1.getLastName().compareToIgnoreCase(p2.getLastName()))
                 .collect(Collectors.toList());
+    }
+
+    public Map<String, Double> calculateSalarySumByCurrency() {
+        return employees.stream()
+                .collect(Collectors.groupingBy(Person::getCurrency, Collectors.summingDouble(Person::getSalary)));
+    }
+
+    public List<String> getAllCountries() {
+        return employees.stream()
+                .map(Person::getCountry)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public List<Person> filterByCountry(String country) {
+        return employees.stream()
+                .filter(employee -> employee.getCountry().equalsIgnoreCase(country))
+                .collect(Collectors.toList());
+    }
+
+    public List<Person> getEmployeesByCountry(String country) {
+        return (country == null || country.isEmpty()) ? employees : this.filterByCountry(country);
     }
 }
