@@ -25,8 +25,9 @@ public class UsersController {
         LocalDateTime currentDateTime = LocalDateTime.now();
         long daysSinceRegistration = Duration.between(registrationDateTime, currentDateTime).toDays();
 
-        User user = new User(2, "Artur", 34, User.UserType.ADMIN, startDate);
+        User user = new User(2, "Artur", 29, User.UserType.ADMIN, startDate);
         model.addAttribute("user", user);
+        model.addAttribute("userTypeStr", user.getUserType().toString());
         model.addAttribute("daysSinceRegistration", daysSinceRegistration);
 
         return "home";

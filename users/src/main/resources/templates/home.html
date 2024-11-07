@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="container">
-    <div class="mt-4">
+    <div th:if="${daysSinceRegistration > 200 and user.age < 30}" class="mt-4">
         <p>Witaj <strong th:text="${user.name}"></strong>!</p>
         <p>Od Twojej rejestracji minęło <strong th:text="${daysSinceRegistration}">0</strong> dni.</p>
     </div>
@@ -16,8 +16,17 @@
         <h1 class="mb-4">Dane użytkownika</h1>
         <p><strong>Imię:</strong> <span th:text="${user.name}"></span></p>
         <p><strong>Id:</strong> <span th:text="${user.id}"></span></p>
-        <p><strong>Wiek:</strong> <span th:text="${user.age}"></span></p>
-        <p><strong>Typ użytkownika:</strong> <span th:text="${user.userType}"></span></p>
+        <p><strong>Wiek:</strong> <span th:text="${user.age}"></span>
+            <span th:if="${user.age > 35}">(powyżej średniej)</span>
+        </p>
+        <p><strong>Typ użytkownika:</strong>
+            <span th:switch="${userTypeStr}">
+                <span th:case="'GUEST'">Gość</span>
+                <span th:case="'REGISTERED'">Zarejestrowany</span>
+                <span th:case="'ADMIN'">Administrator</span>
+                <span th:case="*">Nieznany</span>
+            </span>
+        </p>
         <p><strong>Data rejestracji:</strong> <span th:text="${#dates.format(user.registrationDate, 'yyyy-MM-dd HH:mm')}"></span></p>
     </div>
 
