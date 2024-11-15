@@ -63,6 +63,10 @@ public class Company {
     }
 
     public Person addEmployee(Person newEmployee) {
+        if (newEmployee.getCurrency() != null) {
+            newEmployee.setCurrency(newEmployee.getCurrency().toUpperCase());
+        }
+
         newEmployee.setId(employees.size() + 1);
         employees.add(newEmployee);
 
@@ -88,10 +92,30 @@ public class Company {
         }
     }
 
+    public void updateEmployeeByEmail(String email, Person newEmployee) {
+        Optional<Person> existingPerson = getEmployeeByEmail(email);
+
+        if (existingPerson.isPresent()) {
+            Person person = existingPerson.get();
+            person.setFirstName(newEmployee.getFirstName());
+            person.setLastName(newEmployee.getLastName());
+            person.setEmail(newEmployee.getEmail());
+            person.setSalary(newEmployee.getSalary());
+            person.setCurrency(newEmployee.getCurrency());
+            person.setCountry(newEmployee.getCountry());
+
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
     public boolean deleteEmployee(int id) {
         return employees.removeIf(employee -> employee.getId() == id);
     }
 
+    public boolean deleteEmployeeByEmail(String email) {
+        return employees.removeIf(employee -> Objects.equals(employee.getEmail(), email));
+    }
 
     public List<Person> filterByCompany(String company) {
         return employees.stream()
@@ -125,5 +149,10 @@ public class Company {
 
     public List<Person> getEmployeesByCountry(String country) {
         return (country == null || country.isEmpty()) ? employees : this.filterByCountry(country);
+    }
+
+    public boolean isEmailUnique(String email, String currentEmail) {
+        return employees.stream()
+                .noneMatch(employee -> !employee.getEmail().equals(currentEmail) && employee.getEmail().equals(email));
     }
 }

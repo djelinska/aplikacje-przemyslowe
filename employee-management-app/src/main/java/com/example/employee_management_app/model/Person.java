@@ -1,13 +1,38 @@
 package com.example.employee_management_app.model;
 
+import com.example.employee_management_app.validator.ValidCurrency;
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.Length;
+
 public class Person {
     private int id;
+
+    @NotBlank(message = "Imię jest wymagane")
+    @Length(min = 2, max = 50, message = "Imię musi mieć od 2 do 50 znaków")
+    @Pattern(regexp = "^[A-Za-z-]+$", message = "Imię może zawierać tylko litery i myślniki")
     private String firstName;
+
+    @NotBlank(message = "Nazwisko jest wymagane")
+    @Length(min = 2, max = 50, message = "Nazwisko musi mieć od 2 do 50 znaków")
+    @Pattern(regexp = "^[A-Za-z-]+$", message = "Nazwisko może zawierać tylko litery i myślniki")
     private String lastName;
+
+    @NotBlank(message = "Adres e-mail jest wymagany")
+    @Email(message = "Podaj poprawny adres email")
     private String email;
-    private double salary;
+
+    @NotNull(message = "Wynagrodzenie jest wymagane")
+    @DecimalMin(value = "0.01", message = "Wynagrodzenie musi być dodatnie")
+    @DecimalMax(value = "1000000", message = "Wynagrodzenie nie może przekraczać 1,000,000")
+    private Double salary = 0.0;
+
+    @NotBlank(message = "Waluta jest wymagana")
+    @ValidCurrency
     private String currency;
+
+    @NotBlank(message = "Kraj jest wymagany")
     private String country;
+
     private String company;
 
     public Person(int id, String firstName, String lastName, String email, double salary, String currency, String country, String company) {
@@ -19,6 +44,9 @@ public class Person {
         this.currency = currency;
         this.country = country;
         this.company = company;
+    }
+
+    public Person() {
     }
 
     public String getCompany() {
