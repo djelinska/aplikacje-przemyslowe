@@ -98,4 +98,8 @@ public class PersonService {
 
         return allCountries;
     }
+
+    public double calculateTotalSalaryForCurrency(String currency) {
+        return company.calculateTotalSalaryForCurrency(currency);
+    }
 }

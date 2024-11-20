@@ -1,9 +1,11 @@
 package com.example.employee_management_app.model;
 
+import com.example.employee_management_app.validator.ValidBudget;
 import com.example.employee_management_app.validator.ValidCurrency;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 
+@ValidBudget
 public class Person {
     private int id;
 

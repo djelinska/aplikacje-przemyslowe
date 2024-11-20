@@ -155,4 +155,11 @@ public class Company {
         return employees.stream()
                 .noneMatch(employee -> !employee.getEmail().equals(currentEmail) && employee.getEmail().equals(email));
     }
+
+    public double calculateTotalSalaryForCurrency(String currency) {
+        return employees.stream()
+                .filter(employee -> currency.equals(employee.getCurrency()))
+                .mapToDouble(Person::getSalary)
+                .sum();
+    }
 }
