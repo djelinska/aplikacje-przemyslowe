@@ -8,53 +8,78 @@
 <body>
 <div class="container">
     <div th:insert="fragments :: header"></div>
-    
-    <h3>Dodaj pracownika</h3>
-    <form th:action="@{/employees/add}" th:object="${employee}" method="post" class="w-50">
-        <div class="form-group mt-3">
-            <label for="firstName" class="form-label">Imię</label>
-            <input type="text" id="firstName" class="form-control" th:field="*{firstName}">
-            <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-danger"></div>
-        </div>
-        <div class="form-group mt-3">
-            <label for="lastName" class="form-label">Nazwisko</label>
-            <input type="text" id="lastName" class="form-control" th:field="*{lastName}">
-            <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-danger"></div>
-        </div>
-        <div class="form-group mt-3">
-            <label for="email" class="form-label">Adres e-mail</label>
-            <input type="text" id="email" class="form-control" th:field="*{email}">
-            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
-        </div>
-        <div class="form-group mt-3">
-            <label for="salary" class="form-label">Wynagrodzenie</label>
-            <input type="number" id="salary" class="form-control" th:field="*{salary}" step="0.01">
-            <div th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}" class="text-danger"></div>
-        </div>
-        <div class="form-group mt-3">
-            <label for="currency" class="form-label">Waluta</label>
-            <input type="text" id="currency" class="form-control" th:field="*{currency}">
-            <div th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}" class="text-danger"></div>
-        </div>
-        <div class="mt-3">
-            <label for="country" class="form-label">Kraj</label>
-            <select th:field="*{country}" id="country" class="form-select">
-                <option value="" th:text="'Wybierz kraj'">Wybierz kraj</option>
-                <option th:each="country : ${countries}" th:value="${country}" th:text="${country}"></option>
-            </select>
-            <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}" class="text-danger"></div>
-        </div>
-        <div class="d-flex mt-4">
-            <a href="/employees" class="btn btn-outline-primary me-2">Powrót do listy</a>
-            <button type="submit" class="btn btn-primary">Dodaj</button>
-        </div>
-    </form>
 
-    <div th:if="${successMessage}" class="alert alert-success">
-        <span th:text="${successMessage}"></span>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Dodaj pracownika</h3>
+            <form th:action="@{/employees/add}" th:object="${employee}" method="post" enctype="multipart/form-data">
+                <div class="form-group mt-3">
+                    <label for="photo" class="form-label">Zdjęcie</label>
+                    <input type="file" id="photo" class="form-control" th:field="*{photo}" onchange="previewImage()">
+                    <div th:if="${#fields.hasErrors('photo')}" th:errors="*{photo}" class="text-danger"></div>
+                </div>
+                <div id="selectedPhoto" class="mt-3" style="display: none;">
+                    <img id="selectedPhotoImage" class="img-thumbnail" alt="Wybrane zdjęcie" />
+                </div>
+                <div class="form-group mt-3">
+                    <label for="firstName" class="form-label">Imię</label>
+                    <input type="text" id="firstName" class="form-control" th:field="*{firstName}">
+                    <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-danger"></div>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="lastName" class="form-label">Nazwisko</label>
+                    <input type="text" id="lastName" class="form-control" th:field="*{lastName}">
+                    <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-danger"></div>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="email" class="form-label">Adres e-mail</label>
+                    <input type="text" id="email" class="form-control" th:field="*{email}">
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="salary" class="form-label">Wynagrodzenie</label>
+                    <input type="number" id="salary" class="form-control" th:field="*{salary}" step="0.01">
+                    <div th:if="${#fields.hasErrors('salary')}" th:errors="*{salary}" class="text-danger"></div>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="currency" class="form-label">Waluta</label>
+                    <input type="text" id="currency" class="form-control" th:field="*{currency}">
+                    <div th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}" class="text-danger"></div>
+                </div>
+                <div class="mt-3">
+                    <label for="country" class="form-label">Kraj</label>
+                    <select th:field="*{country}" id="country" class="form-select">
+                        <option value="" th:text="'Wybierz kraj'">Wybierz kraj</option>
+                        <option th:each="country : ${countries}" th:value="${country}" th:text="${country}"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}" class="text-danger"></div>
+                </div>
+                <div class="d-flex mt-4">
+                    <a href="/employees" class="btn btn-outline-primary me-2">Powrót do listy</a>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div th:insert="fragments :: footer"></div>
 </div>
+<script>
+    function previewImage() {
+        const fileInput = document.getElementById("photo");
+        const selectedPhoto = document.getElementById("selectedPhoto");
+        const selectedPhotoImage = document.getElementById("selectedPhotoImage");
+        if (fileInput.files && fileInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedPhotoImage.src = e.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+            selectedPhoto.style.display = "block";
+        } else {
+            selectedPhoto.style.display = "none";
+        }
+    }
+</script>
 </body>
 </html>

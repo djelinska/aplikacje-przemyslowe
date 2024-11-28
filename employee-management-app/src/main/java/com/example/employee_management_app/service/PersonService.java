@@ -5,7 +5,9 @@ import com.example.employee_management_app.model.Company;
 import com.example.employee_management_app.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -101,5 +103,9 @@ public class PersonService {
 
     public double calculateTotalSalaryForCurrency(String currency) {
         return company.calculateTotalSalaryForCurrency(currency);
+    }
+
+    public List<String> importData(MultipartFile file) throws IOException {
+        return company.importData(file);
     }
 }

@@ -1,6 +1,15 @@
 package com.example.employee_management_app.model;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -103,7 +112,10 @@ public class Company {
             person.setSalary(newEmployee.getSalary());
             person.setCurrency(newEmployee.getCurrency());
             person.setCountry(newEmployee.getCountry());
-
+            person.setPhotoFilename(newEmployee.getPhotoFilename());
+            if (newEmployee.getPhotoFilename() != null && !newEmployee.getPhotoFilename().isEmpty()) {
+                person.setPhotoFilename(newEmployee.getPhotoFilename());
+            }
         } else {
             throw new NoSuchElementException();
         }
@@ -161,5 +173,116 @@ public class Company {
                 .filter(employee -> currency.equals(employee.getCurrency()))
                 .mapToDouble(Person::getSalary)
                 .sum();
+    }
+
+    public List<String> importData(MultipartFile file) throws IOException {
+        List<String> errorMessages = new ArrayList<>();
+
+        String fileName = file.getOriginalFilename();
+        if (fileName == null || (!fileName.endsWith(".csv") && !fileName.endsWith(".xlsx"))) {
+            throw new IllegalArgumentException("Nieobsługiwany format pliku. Dozwolone: CSV, Excel.");
+        }
+
+        boolean isCsv = fileName.endsWith(".csv");
+        List<String[]> dataRows = isCsv ? readCsv(file) : readExcel(file);
+
+        List<Person> newEmployees = new ArrayList<>();
+
+        for (int i = 0; i < dataRows.size(); i++) {
+            String[] row = dataRows.get(i);
+            if (row.length < 6) {
+                errorMessages.add("Wiersz " + (i + 1) + ": Brak wymaganych kolumn.");
+                continue;
+            }
+
+            try {
+                Person person = mapToPerson(row);
+                validatePerson(person);
+                newEmployees.add(person);
+            } catch (Exception e) {
+                errorMessages.add("Wiersz " + (i + 1) + ": " + e.getMessage());
+            }
+        }
+
+        if (!errorMessages.isEmpty()) {
+            return errorMessages;
+        }
+
+        employees.clear();
+        employees.addAll(newEmployees);
+
+        return errorMessages;
+    }
+
+    private List<String[]> readCsv(MultipartFile file) throws IOException {
+        try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
+            List<String[]> rows = reader.readAll();
+            if (rows.size() > 1) {
+                return rows.subList(1, rows.size());
+            } else {
+                throw new IOException("Plik CSV nie zawiera danych do przetworzenia.");
+            }
+        } catch (CsvException e) {
+            throw new IOException("Błąd w strukturze CSV", e);
+        }
+    }
+
+    private List<String[]> readExcel(MultipartFile file) throws IOException {
+        List<String[]> dataRows = new ArrayList<>();
+        try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                dataRows.add(mapExcelRow(row));
+            }
+        }
+        return dataRows;
+    }
+
+    private String[] mapExcelRow(Row row) {
+        return new String[]{
+                row.getCell(0).getStringCellValue(),
+                row.getCell(1).getStringCellValue(),
+                row.getCell(2).getStringCellValue(),
+                String.valueOf(row.getCell(3).getNumericCellValue()),
+                row.getCell(4).getStringCellValue(),
+                row.getCell(5).getStringCellValue()
+        };
+    }
+
+    private Person mapToPerson(String[] row) {
+        return new Person(
+                0,
+                row[0],
+                row[1],
+                row[2],
+                Double.parseDouble(row[3]),
+                row[4],
+                row[5],
+                null,
+                null,
+                null
+        );
+    }
+
+    private void validatePerson(Person person) {
+        if (person.getFirstName() == null || person.getFirstName().isEmpty()) {
+            throw new IllegalArgumentException("Imię nie może być puste.");
+        }
+        if (person.getLastName() == null || person.getLastName().isEmpty()) {
+            throw new IllegalArgumentException("Nazwisko nie może być puste.");
+        }
+        if (person.getEmail() == null || !person.getEmail().contains("@")) {
+            throw new IllegalArgumentException("Niepoprawny adres email.");
+        }
+        if (person.getSalary() <= 0) {
+            throw new IllegalArgumentException("Wynagrodzenie musi być większe niż 0.");
+        }
+        if (person.getCurrency() == null || person.getCurrency().isEmpty()) {
+            throw new IllegalArgumentException("Waluta nie może być pusta.");
+        }
+        if (person.getCountry() == null || person.getCountry().isEmpty()) {
+            throw new IllegalArgumentException("Kraj pochodzenia nie może być pusty.");
+        }
     }
 }

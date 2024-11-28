@@ -4,6 +4,7 @@ import com.example.employee_management_app.validator.ValidBudget;
 import com.example.employee_management_app.validator.ValidCurrency;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @ValidBudget
 public class Person {
@@ -37,6 +38,23 @@ public class Person {
 
     private String company;
 
+    private String photoFilename;
+
+    private MultipartFile photo;
+
+    public Person(int id, String firstName, String lastName, String email, Double salary, String currency, String country, String company, String photoFilename, MultipartFile photo) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.salary = salary;
+        this.currency = currency;
+        this.country = country;
+        this.company = company;
+        this.photoFilename = photoFilename;
+        this.photo = photo;
+    }
+
     public Person(int id, String firstName, String lastName, String email, double salary, String currency, String country, String company) {
         this.id = id;
         this.firstName = firstName;
@@ -49,6 +67,22 @@ public class Person {
     }
 
     public Person() {
+    }
+
+    public MultipartFile getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(MultipartFile photo) {
+        this.photo = photo;
+    }
+
+    public String getPhotoFilename() {
+        return photoFilename;
+    }
+
+    public void setPhotoFilename(String photoFilename) {
+        this.photoFilename = photoFilename;
     }
 
     public String getCompany() {
@@ -75,11 +109,11 @@ public class Person {
         this.currency = currency;
     }
 
-    public double getSalary() {
+    public Double getSalary() {
         return salary;
     }
 
-    public void setSalary(double salary) {
+    public void setSalary(Double salary) {
         this.salary = salary;
     }
 
